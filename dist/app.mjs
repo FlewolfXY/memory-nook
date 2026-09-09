@@ -2,7 +2,7 @@ import {spotSpace} from './spaces.mjs';
 import {assetURL} from './asset-url.mjs';
 import {LayoutEditor} from './editor.mjs';
 import {Room,spots} from './room.mjs';
-import {normalizeHome,validBackup,portableBackup,enforceSingleObject,bindStory,placeStory,upgradeStories,detachSource} from './home-data.mjs';
+import {normalizeHome,validBackup,portableBackup,enforceSingleObject,bindStory,placeStory,upgradeStories,seedPondExamples,detachSource} from './home-data.mjs';
 import {extractPalette} from './photo-palette.mjs';
 import {visibleObject} from './furnishing-data.mjs';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -12,12 +12,13 @@ const examples=()=>[{id:'metro',title:'车窗里叠着另一个自己',note:'昏
 function toast(s){$('#toast').textContent=s;$('#toast').classList.add('show');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('show'),3200);}
 function open(title,kicker,html){$('#object-hint').hidden=true;$('#panel-title').textContent=title;$('#panel-kicker').textContent=kicker;$('#content').innerHTML=html;if(!$('#panel').open)$('#panel').showModal();}
 function close(){$('#panel').close();}
-async function writeHome(next){await new Promise((resolve,reject)=>{const tx=db.transaction('home','readwrite'),store=tx.objectStore('home');store.put(next.records,'memories');store.put(next.layout,'layout');store.put(next.bindings,'storyBindings');store.put(2,'storyEdition');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
+async function writeHome(next){await new Promise((resolve,reject)=>{const tx=db.transaction('home','readwrite'),store=tx.objectStore('home');store.put(next.records,'memories');store.put(next.layout,'layout');store.put(next.bindings,'storyBindings');store.put(2,'storyEdition');store.put(2,'gardenVersion');store.put(1,'pondEdition');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
 async function initDB(){
  db=await new Promise((resolve,reject)=>{const q=indexedDB.open('memory-nook-v1',1);q.onupgradeneeded=()=>q.result.createObjectStore('home');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
  const read=key=>new Promise((resolve,reject)=>{const q=db.transaction('home').objectStore('home').get(key);q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
- const [saved,oldLayout,oldBindings,edition]=await Promise.all(['memories','layout','storyBindings','storyEdition'].map(read));
- const next=normalizeHome(upgradeStories({records:saved||examples(),layout:oldLayout||{},bindings:oldBindings||{}},edition),{seedStories:edition===undefined});
+ const [saved,oldLayout,oldBindings,edition,gardenVersion,pondEdition]=await Promise.all(['memories','layout','storyBindings','storyEdition','gardenVersion','pondEdition'].map(read));
+ const next=normalizeHome(upgradeStories({records:saved||examples(),layout:oldLayout||{},bindings:oldBindings||{},gardenVersion},edition),{seedStories:edition===undefined});
+ if(pondEdition===undefined)seedPondExamples(next);
  await writeHome(next);records=next.records;layout=next.layout;bindings=next.bindings;
 }
 function changeHome(fn){const task=sequence.then(async()=>{const next=structuredClone({records,layout,bindings});fn(next);enforceSingleObject(next);await writeHome(next);records=next.records;layout=next.layout;bindings=next.bindings;refresh();return true;}).catch(()=>{toast('没有保存成功，请导出备份后重试。');return false;});sequence=task.then(()=>{});return task;}
@@ -58,8 +59,8 @@ try{await initDB();try{room=new Room($('#scene'),detail,pickSpot);room.onPropPic
 function saveLayout(next){return changeHome(home=>home.layout=next);}
 $('#arrange').onclick=()=>editor?.setEnabled(!editor.enabled);$('#turn-object').onclick=()=>editor?.rotate(Math.PI/8);$('#object-height').onchange=e=>editor?.height(e.target.value);$('#reset-object').onclick=()=>editor?.resetSelected();
 
-function switchSpace(space){if(!room)return;if(pending)stopPlace();room.switchSpace(space);document.body.dataset.space=space;document.querySelectorAll('[data-space]').forEach(b=>{b.classList.toggle('active',b.dataset.space===space);b.setAttribute('aria-pressed',String(b.dataset.space===space));});document.querySelector('.welcome h1').textContent=space==='courtyard'?'在这里，慢一点。':'回来就好。';document.querySelector('.room-label').textContent=space==='courtyard'?'02 / 有水声的小院':'01 / 窗边的房间';$('#observation').innerHTML=space==='courtyard'?'轻触水面，等一个片刻游近。<small>点小鱼，重新遇见它的故事。</small>':'翻一本书，听听抱枕的故事。<small>屋里的小东西，都可以留下你的记忆。</small>';}
-document.querySelectorAll('[data-space]').forEach(b=>b.onclick=()=>switchSpace(b.dataset.space));
+function switchSpace(space){if(!room)return;if(pending)stopPlace();room.switchSpace(space);document.body.dataset.space=space;$('#space-exit').innerHTML=space==='courtyard'?'<span aria-hidden="true">↖</span> 回窗边小屋':'去花园与池塘 <span aria-hidden="true">↗</span>';$('#space-exit').setAttribute('aria-label',space==='courtyard'?'回窗边小屋':'去花园与池塘');document.querySelector('.welcome h1').textContent=space==='courtyard'?'在这里，慢一点。':'回来就好。';document.querySelector('.room-label').textContent=space==='courtyard'?'02 / 有水声的小院':'01 / 窗边的房间';$('#observation').innerHTML=space==='courtyard'?'轻触水面，等一个片刻游近。<small>点小鱼，重新遇见它的故事。</small>':'翻一本书，听听抱枕的故事。<small>屋里的小东西，都可以留下你的记忆。</small>';}
+$('#space-exit').onclick=()=>switchSpace(room?.space==='courtyard'?'living-room':'courtyard');
 if(room)room.onWater=p=>{const id=room.pond.tap(p.x,p.z);if(!id)toast('池塘还没有记忆鱼。在记忆匣中选一个片刻，换成「流彩小鱼」吧。');};
 
 $('#pond-invite').onclick=()=>{open('让哪个片刻游进池塘？','A MEMORY THAT LEARNS TO SWIM',`<p class="note">它会从原来的物件移到池塘。原照片、笔记和日期都会留着。</p>${records.map(r=>`<button class="memory" data-swim="${r.id}">${r.image?`<img src="${esc(assetURL(r.image))}" alt="">`:'<span class="icon">✧</span>'}<span><b>${esc(r.title)}</b><small>${esc(sourcePlaces(r))}</small></span></button>`).join('')||'<p class="note">先用「留下一个片刻」收好一段记忆吧。</p>'}`);document.querySelectorAll('[data-swim]').forEach(b=>b.onclick=async()=>{const id=b.dataset.swim;if(await changeHome(home=>{const r=home.records.find(r=>r.id===id);r.form='fish';placeStory(home,id,{spot:'pond',position:null,localPosition:null,parentId:null,rotation:0});})){close();toast('轻触水面，等它游近。');}});};

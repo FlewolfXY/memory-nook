@@ -1,16 +1,21 @@
-import {storyExamples} from './demo-memories.mjs';
+import {storyExamples,pondExamples} from './demo-memories.mjs';
 import {defaultBindings,allLayoutIds,stableId,migrateLayout,migrateAttachments,validBindings} from './furnishing-data.mjs';
 import {validTransform} from './editor.mjs';
-const photoPaths=new Set(storyExamples.map(r=>r.image));
+const photoPaths=new Set([...storyExamples,...pondExamples].map(r=>r.image));
 export const safePhoto=image=>!image||typeof image==='string'&&(photoPaths.has(image)||/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image));
 export function normalizeHome(data,{seedStories=false}={}){
-  const home={records:migrateAttachments(structuredClone(data.records||[])),layout:migrateLayout(data.layout||{}),bindings:Object.fromEntries(Object.entries(data.bindings||{}).map(([k,v])=>[stableId(k),v])),edition:2};
+  const home={records:migrateAttachments(structuredClone(data.records||[])),layout:migrateLayout(data.layout||{}),bindings:Object.fromEntries(Object.entries(data.bindings||{}).map(([k,v])=>[stableId(k),v])),edition:2,gardenVersion:2};
+  if(data.gardenVersion!==2){
+    for(const [id,t]of Object.entries(home.layout))if(id.startsWith('courtyard/')&&!t.parent){t.position[0]*=2;t.position[2]*=1.65;}
+    for(const r of home.records)if(r.spot?.startsWith('garden-')&&r.position){r.position[0]*=2;r.position[2]*=1.65;}
+  }
   if(seedStories){
     for(const r of storyExamples)if(!home.records.some(x=>x.id===r.id)&&home.records.length<1000)home.records.push(structuredClone(r));
     for(const [id,source]of Object.entries(defaultBindings))if(!Object.hasOwn(home.bindings,id)&&home.records.some(r=>r.id===source&&r.example))home.bindings[id]=source;
   }
   return enforceSingleObject(home);
 }
+export function seedPondExamples(home){for(const r of pondExamples)if(!home.records.some(x=>x.id===r.id)&&home.records.length<1000)home.records.push(structuredClone(r));return enforceSingleObject(home);}
 // Source records remain intact; only their display associations are exclusive.
 export const photoKey=r=>r.image||'record:'+r.id;
 export function detachSource(home,id){
@@ -65,7 +70,7 @@ export function validBackup(data){
   return data.bindings===undefined||validBindings(data.bindings,data.records);
 }
 export async function portableBackup(home,readPhoto){
-  const data=structuredClone({version:2,records:home.records,layout:home.layout,bindings:home.bindings}),photos=new Map();
+  const data=structuredClone({version:2,gardenVersion:2,records:home.records,layout:home.layout,bindings:home.bindings}),photos=new Map();
   await Promise.all(data.records.map(async r=>{if(photoPaths.has(r.image)){const path=r.image;if(!photos.has(path))photos.set(path,readPhoto(path));r.image=await photos.get(path);if(!r.image?.startsWith('data:image/')||!safePhoto(r.image))throw Error('照片未能完整打包');}}));
   return data;
 }

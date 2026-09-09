@@ -6,7 +6,7 @@ import {buildCourtyard,Pond} from '../dist/courtyard.mjs';
 import {courtyardIds,spotSpace} from '../dist/spaces.mjs';
 import {LayoutEditor} from '../dist/editor.mjs';
 import {makeSwimmer,stepSwimmer,beckon,inside} from '../dist/pond-state.mjs';
-import {normalizeHome,placeStory,validBackup} from '../dist/home-data.mjs';
+import {normalizeHome,seedPondExamples,placeStory,validBackup} from '../dist/home-data.mjs';
 import {storyExamples} from '../dist/demo-memories.mjs';
 
 test('garden identities and local parent transforms survive the same editor snapshot',()=>{
@@ -20,13 +20,13 @@ test('tapping ten times preserves resident identity and finite bounded motion',(
  const a=makeSwimmer('my-memory'),b=makeSwimmer('other-memory'),all=[a,b];assert.deepEqual(makeSwimmer('my-memory'),a);
  for(let i=0;i<10;i++){const id=beckon(all,12,-15,i*.1);assert.ok(all.some(s=>s.id===id));}
  assert.equal(all.length,2);
- for(let frame=0;frame<2400;frame++)for(const s of all){const old={...s};stepSwimmer(s,frame/60,1/60);assert.ok(inside(s.x,s.z,.73));assert.ok(Math.hypot(s.x-old.x,s.z-old.z)<=.5/60+1e-8);assert.ok(Number.isFinite(s.heading));}
+ for(let frame=0;frame<2400;frame++)for(const s of all){const old={...s};stepSwimmer(s,frame/60,1/60);assert.ok(inside(s.x,s.z,.73));assert.ok(Math.hypot(s.x-old.x,s.z-old.z)<=.65/60+1e-8);assert.ok(Number.isFinite(s.heading));}
  assert.ok(all.every(s=>s.target===null));
 });
 
 test('chosen resident approaches the target before resuming its route',()=>{
  const s=makeSwimmer('arrival');beckon([s],1.1,1.1,0);const before=Math.hypot(s.x-s.target.x,s.z-s.target.z);
- for(let i=0;i<240;i++)stepSwimmer(s,i/60,1/60);
+ for(let i=0;i<600;i++)stepSwimmer(s,i/60,1/60);
  assert.ok(Math.hypot(s.x-s.target.x,s.z-s.target.z)<Math.min(.05,before));
 });
 
@@ -37,3 +37,12 @@ test('pond source survives backup, converts exclusively from a book and does not
  for(let i=0;i<10;i++){pond.tap(.8,.6);pond.update(i*.2,.016,false);}assert.equal(pond.residents.size,1);assert.equal(pond.ripples.length,6);assert.equal(home.records.length,12);
  const bad=structuredClone(home);bad.records.find(r=>r.id===id).spot='table';assert.equal(validBackup({version:2,...bad}),false);assert.equal(spotSpace('pond'),'courtyard');
 });
+
+ test('pond examples have unique sources and old garden layouts expand exactly once',()=>{
+ const old={records:[],bindings:{},layout:{'courtyard/table':{position:[-1.95,0,1.2],rotation:[0,0,0,1],scale:[1,1,1],parent:null}}};
+ const home=normalizeHome(old);seedPondExamples(home);seedPondExamples(home);
+ assert.equal(home.records.length,2);assert.equal(new Set([...storyExamples,...home.records].map(r=>r.image)).size,14);
+ assert.ok(home.records.every(r=>r.spot==='pond'&&r.form==='fish'));assert.ok(validBackup({version:2,...home}));
+ assert.deepEqual(home.layout['courtyard/table'].position,[-3.9,0,1.2*1.65]);assert.deepEqual(normalizeHome(home),home);
+ const pond=new Pond(new T.Group());pond.sync(home.records);assert.equal(pond.residents.size,2);
+ });

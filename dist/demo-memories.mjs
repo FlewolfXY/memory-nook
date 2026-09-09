@@ -289,3 +289,54 @@ export const storyExamples=[
     "paletteMethod": "sampled"
   }
 ];
+
+export const pondExamples=[
+  {
+    "id": "story-aurora",
+    "title": "夜空慢慢游过来",
+    "note": "抬头的时候，绿色的光正在紫色夜空里舒展。没有急着说话，只想再站一会儿。",
+    "date": "2026-02-18",
+    "palette": [
+      "#7bc7a2",
+      "#37615c",
+      "#1d1826"
+    ],
+    "image": "/assets/memories/aurora.jpg",
+    "form": "fish",
+    "spot": "pond",
+    "rotation": 0,
+    "scale": 1,
+    "parents": [],
+    "example": true,
+    "paletteMethod": "sampled",
+    "photoCredit": {
+      "creator": "Bjørn Are With Andreassen",
+      "url": "https://unsplash.com/photos/aurora-borealis-vPg790ZGCCM",
+      "license": "Unsplash License"
+    }
+  },
+  {
+    "id": "story-rose-reflections",
+    "title": "晚霞落进另一片水",
+    "note": "天边的粉金色沿着水面铺开，蓝色一点点加深。回去的路上，还记得那片水的颜色。",
+    "date": "2026-08-22",
+    "palette": [
+      "#627bbd",
+      "#ffaba0",
+      "#1b1f41"
+    ],
+    "image": "/assets/memories/rose-reflections.jpg",
+    "form": "fish",
+    "spot": "pond",
+    "rotation": 0,
+    "scale": 1,
+    "parents": [],
+    "example": true,
+    "paletteMethod": "sampled",
+    "photoCredit": {
+      "creator": "Gaston Abascal",
+      "url": "https://unsplash.com/photos/lake-reflecting-pink-and-blue-sky-8F-6pXyQyLU",
+      "license": "Unsplash License"
+    }
+  }
+];

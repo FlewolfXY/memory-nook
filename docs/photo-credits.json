@@ -166,5 +166,27 @@
     "width": 850,
     "height": 567,
     "usageNote": "Stock photograph illustrating an explicitly fictional demo memory; not a personal photo of the user."
+  },
+  {
+    "file": "aurora.jpg",
+    "creator": "Bjørn Are With Andreassen",
+    "sourceURL": "https://unsplash.com/photos/aurora-borealis-vPg790ZGCCM",
+    "imageURL": "https://images.unsplash.com/photo-1560185678-759b5712a60e",
+    "license": "Unsplash License",
+    "licenseURL": "https://unsplash.com/license",
+    "alt": "Mint and teal aurora ribbons in a violet night sky above snowy mountains and a quiet fjord.",
+    "width": 800,
+    "height": 533
+  },
+  {
+    "file": "rose-reflections.jpg",
+    "creator": "Gaston Abascal",
+    "sourceURL": "https://unsplash.com/photos/lake-reflecting-pink-and-blue-sky-8F-6pXyQyLU",
+    "imageURL": "https://images.unsplash.com/photo-1543373014-cfe4f4bc1cdf",
+    "license": "Unsplash License",
+    "licenseURL": "https://unsplash.com/license",
+    "alt": "Rose-pink and apricot clouds reflected in calm blue river water beside a rocky shoreline in Tigre.",
+    "width": 850,
+    "height": 471
   }
 ]
