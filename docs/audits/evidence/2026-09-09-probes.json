@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-09-09T18:16:55.899Z",
+  "sourceCommit": "8e42b5d50186dd21806c335882b2973a33eafe3e",
+  "method": "Node pure-data diagnostics and geometry construction; no browser, GPU or private records",
+  "inventory": {
+    "layoutIdentities": 56,
+    "legacyIdentities": 48,
+    "visibleFurnishings": 40,
+    "photoStories": 12,
+    "pondPhotoStories": 2,
+    "defaultPhotoBindings": 12,
+    "distinctDefaultPhotos": 14,
+    "allDefaultPhotoPathsReadable": true
+  },
+  "rollback": {
+    "edition": 1,
+    "dateOnlyEditPreserved": false,
+    "dateAfter": "2026-08-28",
+    "rotationOnlyEditPreserved": false,
+    "rotationAfter": 0
+  },
+  "roundTrip": {
+    "exportedRecordCount": 1001,
+    "exportAcceptedByImporter": false,
+    "note1001AcceptedByImporter": false
+  },
+  "sizeBoundary": {
+    "tenMaximumPhotosBase64MiB": 106.66667938232422,
+    "importFileLimitMiB": 100,
+    "method": "Arithmetic from current 8 MiB photo and 100 MiB import limits; not a browser quota test"
+  }
+}

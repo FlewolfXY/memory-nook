@@ -1,17 +1,60 @@
 # The Memory Nook
 
-A small 3D home for memories. Keep a photo and a note, shape a keepsake, find it a place, and revisit its story.
+一个可以回来的记忆小屋。现实中的片刻获得一种物件形态，由你亲手安放，再从这里重新遇见。
 
-Run locally with Python 3: `python serve.py`, then open the address printed in the terminal. No installation or build is required. App source is in `dist/` (including vendored Three.js and its license).
+[公开演示](https://flewolfxy.github.io/memory-nook/) · [总进度](PROGRESS.md) · [版本日志](CHANGELOG.md) · [迭代计划](ROADMAP.md) · [当前实现审计](docs/audits/2026-09-09.md)
 
-Demo: twelve distinct credited photographs form eight books and four cushions. Example stories are fictional. Each photo has one displayed object; reassigning it moves its association. The larger garden includes movable props and two fish from independent aurora and sunset-reflection photo stories. Click the low clay garden sign to go outside; hover the garden door to ease it open, and click it to come home. To add another fish, select 让一个片刻游起来, and choose a memory. Tap water to beckon its fish; tap the fish to revisit the source. Geometry templates and local photo color sampling are implemented; online AI generation is not.
+## 当前能做什么
 
-Your photos, notes and layout stay in this browser. Export/import a complete backup in the app to transfer your personal home to another device. Source code does not contain your saved memories.
+- 留下照片或短笔记，先收好，也可选择卡片、相框、小灯、黏土风景或流彩鱼。
+- 给书、抱枕与其他家具关联图文；默认一张照片只展示在一个物件上，重新安放会移动关联。
+- 布置模式中拖动家具和小物、调高度、旋转。墙体、地板、路径和固定绿化属于建筑。
+- 从小屋右侧的扁平童话小径进入院子；悬停院子门会半开，点击回屋。触屏可直接点击，键盘有等价导航入口。
+- 点击水面唤近已有鱼，点鱼读来源。点水不增加记忆数量。
+- 记忆匣提供日期排序、文本搜索、编辑、收起；两条记忆可以组合一盏保留来源的配色灯。
+- 昼夜切换、可选合成音乐，以及图文/布局/来源关联的完整 JSON 备份与恢复。
 
-## GitHub Pages
+默认 17 条示例：12 张独立客厅照片对应 8 本书和 4 只抱枕，2 张独立照片对应两条鱼，另有 3 条无照片摆件记录。示例不是用户真实经历；不设置虚拟住户人生。摄影信息见 [照片署名](docs/photo-credits.json)。
 
-In Settings → Pages, choose GitHub Actions as the source. Push this source to `main`. The included workflow checks data rules and static assets, then deploys `dist/`. Get the public URL from the successful deployment. Each subsequent push updates the demo. This does not synchronize private browser data.
+## 实现与当前边界
 
-Checks: `node --test tests/*.test.mjs` and `node scripts/check-assets.mjs` (Node 24). Browser and phone interactions still need separate acceptance testing.
+静态 HTML/CSS、原生 JavaScript 模块和随仓库提供的 Three.js 0.180.0。dist/ 是手写源码，无安装或生产构建步骤。
 
-Photography attribution and reuse information: `docs/photo-credits.json`. Three.js license: `dist/vendor/THREE-LICENSE.txt`.
+已实现的是几何模板、照片本地采色、自由布置与来源关联。没有在线 AI 理解/建模、自动聚类、长文版本引用、水母/珊瑚、跨家网络或云同步。笔记目前最多 1000 字，一次一张 JPG/PNG/WebP，单图最多 8 MiB。
+
+原有 19 项数据/几何测试通过，但 [AUD-001](docs/audits/2026-09-09.md) 发现旧版回滚字段保护和备份容量契约等问题，尚未修复。真实浏览器存储、手机触控、GPU 与持续运行验收仍待完成。详细状态以总进度为准。
+
+## 在本地看和改
+
+安装 Python 3 后，在仓库根目录运行：
+
+~~~sh
+python3 serve.py
+~~~
+
+打开终端输出的地址。直接编辑 dist/ 下源文件，刷新页面。克隆本 GitHub 仓库即可拥有可编辑的本地源码副本；源代码副本不含你在其他浏览器保存的私人记忆。
+
+检查命令（Node.js 24）：
+
+~~~sh
+node --test tests/*.test.mjs
+node scripts/check-assets.mjs
+~~~
+
+只读审计探针：
+
+~~~sh
+node scripts/audit-baseline.mjs
+~~~
+
+探针报告当前边界和缺陷，不是通过的回归测试，也不会访问浏览器数据库。
+
+## 保存与设备
+
+照片、笔记和布局保存在当前浏览器的 IndexedDB。手机打开公开演示不用登录 ChatGPT，但不会自动出现电脑保存的个人内容；不同站点地址的存储也互相独立。设置中的导出/恢复用于主动携带数据，当前容量边界见审计报告。
+
+GitHub 上持续同步的是经检查的源码与项目记录，按提交更新，不是逐键同步或离开会话后的自动工作。工作流已配置成功，推到 main 会检查并发布 dist/。本轮审计只有文档和工具变化，应用基准保持不变。发布方式见 [GitHub Pages](docs/github-pages.md)。
+
+继续开发先读 [AGENTS](AGENTS.md)、[产品基准](PROJECT_BRIEF.md)、[总进度](PROGRESS.md) 和 [当前片段](CURRENT_SLICE.md)。每次修改必须更新版本日志与总进度。
+
+Three.js 许可证：[MIT](dist/vendor/THREE-LICENSE.txt)。
