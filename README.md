@@ -4,8 +4,7 @@ A small 3D home for memories. Keep a photo and a note, shape a keepsake, find it
 
 Run locally with Python 3: `python serve.py`, then open the address printed in the terminal. No installation or build is required. App source is in `dist/` (including vendored Three.js and its license).
 
-Demo: a fictional resident, 阿禾, has just moved in. A moving box, canvas tote, repaired rabbit, worn books, cushions, mug and borrowed plant carry connected everyday stories. Three generated phone snapshots depict moving day, a shared meal and reading at the new window. Each image has one displayed object. Examples are clearly labeled, and edited personal records are preserved during migration. A flat pastel garden path leads outside; click the hinged door to return. The pond retains two source-linked fish. Geometry templates and photo color sampling are local; online AI generation is not connected.
-
+Demo: twelve distinct credited photographs form eight books and four cushions. Example stories are fictional. Each photo has one displayed object; reassigning it moves its association. The larger garden includes movable props and two fish from independent aurora and sunset-reflection photo stories. Click the low clay garden sign to go outside; hover the garden door to ease it open, and click it to come home. To add another fish, select 让一个片刻游起来, and choose a memory. Tap water to beckon its fish; tap the fish to revisit the source. Geometry templates and local photo color sampling are implemented; online AI generation is not.
 
 Your photos, notes and layout stay in this browser. Export/import a complete backup in the app to transfer your personal home to another device. Source code does not contain your saved memories.
 

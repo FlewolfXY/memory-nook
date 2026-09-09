@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {restoreMomentExamples} from '../dist/rollback-home.mjs';import {storyExamples} from '../dist/demo-memories.mjs';import {defaultBindings} from '../dist/furnishing-data.mjs';
+const fixture=JSON.parse(fs.readFileSync(new URL('./rejected-home.json',import.meta.url)));
+test('rollback restores original photos and bindings, removing untouched fictional additions',()=>{const h=structuredClone(fixture);restoreMomentExamples(h,1);assert.deepEqual(h.records,storyExamples);assert.deepEqual(h.bindings,defaultBindings);const once=structuredClone(h);restoreMomentExamples(h,2);assert.deepEqual(h,once);});
+test('rollback preserves user-edited text and leaves cleared homes cleared',()=>{const h=structuredClone(fixture);h.records[0].note='我的修改';restoreMomentExamples(h,1);assert.equal(h.records[0].note,'我的修改');assert.equal(h.records[0].form,'card');const empty={records:[],bindings:{}};restoreMomentExamples(empty,1);assert.deepEqual(empty,{records:[],bindings:{}});});

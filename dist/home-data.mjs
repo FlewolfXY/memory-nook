@@ -1,8 +1,7 @@
-import {personalPhotoPaths} from './personal-home.mjs';
 import {storyExamples,pondExamples} from './demo-memories.mjs';
 import {defaultBindings,allLayoutIds,stableId,migrateLayout,migrateAttachments,validBindings} from './furnishing-data.mjs';
 import {validTransform} from './editor.mjs';
-const photoPaths=new Set([...storyExamples,...pondExamples].map(r=>r.image).concat(personalPhotoPaths));
+const photoPaths=new Set([...storyExamples,...pondExamples].map(r=>r.image).concat(['moving-day','shared-meal','reading-window'].map(n=>'/assets/memories/'+n+'.jpg')));
 export const safePhoto=image=>!image||typeof image==='string'&&(photoPaths.has(image)||/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image));
 export function normalizeHome(data,{seedStories=false}={}){
   const home={records:migrateAttachments(structuredClone(data.records||[])),layout:migrateLayout(data.layout||{}),bindings:Object.fromEntries(Object.entries(data.bindings||{}).map(([k,v])=>[stableId(k),v])),edition:2,gardenVersion:2};
@@ -55,7 +54,7 @@ export function upgradeStories(home,edition){
 }
 export function validBackup(data){
   if(![1,2].includes(data?.version)||!Array.isArray(data.records)||data.records.length>1000)return false;
-  const ids=new Set(),forms=['card','frame','lamp','clay','fish','box','tote','rabbit'],spots=['table','window','shelf','cabinet','bookshelf','side','garden-table','garden-bench','pond'];
+  const ids=new Set(),forms=['card','frame','lamp','clay','fish'],spots=['table','window','shelf','cabinet','bookshelf','side','garden-table','garden-bench','pond'];
   for(const r of data.records){
     if(!r||typeof r.id!=='string'||!/^[-a-zA-Z0-9]{1,80}$/.test(r.id)||ids.has(r.id)||typeof r.title!=='string'||r.title.length>80||typeof r.note!=='string'||r.note.length>1000||typeof r.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.date)||!forms.includes(r.form)||(r.spot&&!spots.includes(r.spot))||!Array.isArray(r.palette)||r.palette.length!==3||!r.palette.every(c=>/^#[a-f0-9]{6}$/i.test(c))||!Number.isFinite(r.rotation)||!Number.isFinite(r.scale)||r.scale<.1||r.scale>2||!Array.isArray(r.parents)||!safePhoto(r.image))return false;
     if(r.spot&&(r.form==='fish')!==(r.spot==='pond'))return false;
