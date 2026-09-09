@@ -46,3 +46,12 @@ test('pond source survives backup, converts exclusively from a book and does not
  assert.deepEqual(home.layout['courtyard/table'].position,[-3.9,0,1.2*1.65]);assert.deepEqual(normalizeHome(home),home);
  const pond=new Pond(new T.Group());pond.sync(home.records);assert.equal(pond.residents.size,2);
  });
+
+ test('door remains hinged and raycastable after batching, without entering furniture inventory',async()=>{
+ const {navigationOwner,animateDoor,gardenSign}=await import('../dist/navigation.mjs');
+ const yard=buildCourtyard(),hinge=yard.userData.doorHinge,entry=yard.userData.doorEntry;
+ assert.ok(hinge.children.some(o=>o.isMesh));assert.equal(navigationOwner(hinge.children[0]),entry);assert.equal(entry.userData.layoutId,undefined);
+ for(let i=0;i<60;i++)animateDoor(hinge,true,1/60);assert.ok(hinge.rotation.y<-.55&&hinge.rotation.y>-.58);
+ for(let i=0;i<90;i++)animateDoor(hinge,false,1/60);assert.ok(Math.abs(hinge.rotation.y)<.001);
+ const sign=gardenSign();assert.equal(sign.userData.navigation,'courtyard');assert.ok(new T.Box3().setFromObject(sign).max.y<.8);
+ });

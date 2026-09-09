@@ -8,4 +8,9 @@
 
 #pond-invite{display:none;pointer-events:auto;margin-top:18px;background:#708878;color:#fff9ec;border:0;border-radius:22px;padding:11px 17px}body[data-space='courtyard'] #pond-invite{display:block}
 
-.space-exit{position:fixed;z-index:3;left:73%;top:55%;padding:10px 6px;border:0;border-bottom:1px solid #9b9e86;border-radius:0;background:#eee7dc99;font:14px var(--serif);color:#60765c;white-space:nowrap;transform:translateY(-50%);text-shadow:0 1px 8px #fff9ed}.space-exit span{font-size:27px;vertical-align:middle;margin-left:9px}.space-exit:hover{background:#eee7dccc;transform:translateY(-50%);color:#354f40}body.editing .space-exit,body.placing .space-exit{display:none}body[data-space="courtyard"] .welcome>p:not(.eyebrow){max-width:185px}body[data-space="courtyard"] .room-label{color:#627e76}@media(max-width:700px){.space-exit{font-size:12px;padding:8px 5px}.space-exit span{font-size:23px}#pond-invite{font-size:12px;padding:9px 12px}}
+/* Keyboard-only equivalent of the scene's clay sign and hinged door. */
+.navigation-access{position:fixed;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;border:0}
+.navigation-access:focus-visible{width:auto;height:auto;clip-path:none;left:50%;bottom:130px;transform:translateX(-50%);padding:12px 20px;z-index:6;background:#e7ecd9}
+body.editing .navigation-access,body.placing .navigation-access{display:none}
+body[data-space="courtyard"] .welcome>p:not(.eyebrow){max-width:185px}body[data-space="courtyard"] .room-label{color:#627e76}
+@media(max-width:700px){#pond-invite{font-size:12px;padding:9px 12px}}

@@ -1,4 +1,5 @@
 import * as T from './vendor/three.module.js';
+import {gardenDoor} from './navigation.mjs';
 import {fish} from './fish.mjs';
 import {pond,makeSwimmer,beckon,stepSwimmer,seedFor} from './pond-state.mjs';
 import {box,ball,cyl,rod,plant,archPanel,mergeStatic} from './room.mjs';
@@ -10,9 +11,7 @@ export function buildCourtyard(){
  // A low walled garden, with a timber arch framing the way home.
  box(root,.2,.72,10.2,'#d9cfb4',[-6.2,.32,0]);box(root,.28,.1,10.23,'#e8dec5',[-6.2,.72,0]);
  box(root,12.42,.85,.18,'#d9cfb4',[0,.39,-5.1]);box(root,12.5,.12,.3,'#ece0c3',[0,.85,-5.1]);
- archPanel(root,1.4,2.55,.14,'#ad8760',[4.4,.06,-4.9]);archPanel(root,1.16,2.34,.04,'#647c68',[4.4,.08,-4.73]);
- for(let i=0;i<5;i++)box(root,.018,1.67,.012,'#94a486',[3.95+i*.23,.97,-4.67],.002);
- ball(root,.055,'#cbb373',[4.8,1.04,-4.61]);
+ gardenDoor(root);
  // Stepping stones leave a clear foreground path and room for the pond.
  for(let k=0;k<11;k++){const z=-4.35+k*.85,x=-4.65+Math.sin(k*.8)*.2;const stone=cyl(root,.38,.42,.07,k%2?'#e3d9bd':'#d2c8ad',[x,.065,z]);stone.scale.z=.72;stone.rotation.y=k*.55;}
  const basin=cyl(root,1,1,.12,'#568d8c',[pond.x,.14,pond.z]);basin.scale.set(pond.rx,1,pond.rz);
