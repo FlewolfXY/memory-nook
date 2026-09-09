@@ -70,7 +70,31 @@ export function buildRoom(){const root=new T.Group();root.name='memory-nook';
  root.userData.lampLight=lampLight;let id=0;root.traverse(o=>{if(o.userData.movable)o.userData.layoutId='item-'+id++;});installFurnishings(root);mergeStatic(root);return root;
 }
 export function keepsake(record){const root=new T.Group();root.name='keepsake-'+record.id;root.userData.recordId=record.id;const pal=record.palette||[C.pink,C.blue,C.gold],type=record.form||'card';
- if(type==='lamp'){
+ if(type==='box'){
+  box(root,.86,.045,.64,'#bd9366',[0,.025,0],.012);
+  for(const x of [-.42,.42])box(root,.045,.48,.64,'#c7a374',[x,.27,0],.012);
+  for(const z of [-.30,.30])box(root,.86,.48,.045,'#d2ad7b',[0,.27,z],.012);
+  const flap=box(root,.90,.025,.30,'#dab88a',[0,.50,.44],.01);flap.rotation.x=.45;
+  const back=box(root,.90,.025,.30,'#cba577',[0,.50,-.43],.01);back.rotation.x=-.45;
+  box(root,.035,.42,.008,'#ead7ac',[.17,.26,.326],.002);
+  box(root,.27,.13,.014,'#eee0bd',[-.19,.29,.326],.006);
+  box(root,.59,.14,.42,'#98aeb8',[0,.43,0],.05);
+  for(let i=0;i<4;i++)box(root,.045,.008,.35,'#e5e6cf',[-.21+i*.14,.505,.01],.002);
+ }else if(type==='tote'){
+  box(root,.54,.48,.18,pal[0],[0,.28,0],.06);
+  for(const z of [-.07,.07]){const handle=new T.Mesh(new T.TorusGeometry(.16,.025,8,24,Math.PI),mat(pal[1]));handle.position.set(0,.49,z);root.add(handle);}
+  box(root,.27,.22,.02,pal[1],[.01,.27,.1],.02);
+  for(let i=0;i<3;i++)box(root,.12,.005,.015,'#ede1c2',[0,.23+i*.04,.116],.002);
+  const ticket=box(root,.16,.22,.012,'#f6e9c7',[.12,.51,.01],.002);ticket.rotation.z=-.13;
+ }else if(type==='rabbit'){
+  ball(root,.17,pal[0],[0,.19,0],[.95,1.1,.8]);ball(root,.145,pal[0],[0,.41,.01],[1,1,.88]);
+  const ear=ball(root,.06,pal[0],[-.085,.62,0],[.8,2.0,.65]);ear.rotation.z=-.12;
+  const bent=ball(root,.065,pal[0],[.11,.58,.04],[.8,1.65,.7]);bent.rotation.z=-.65;
+  for(const x of [-.065,.065])ball(root,.014,'#635044',[x,.43,.133]);ball(root,.017,'#c88f91',[0,.39,.148],[1,.65,.5]);
+  for(const x of [-.12,.12])ball(root,.07,pal[0],[x,.08,.08],[1,.65,1.4]);
+  box(root,.1,.1,.014,pal[1],[.045,.23,.14],.014);
+  for(const x of [.015,.045,.075])box(root,.012,.075,.01,'#f2e0c9',[x,.23,.15],.002);
+ }else if(type==='lamp'){
   cyl(root,.17,.2,.07,C.wood,[0,.035,0]);for(let k=0;k<3;k++){const slab=box(root,.27-k*.025,.16,.16,pal[k],[k*.015,.16+k*.12,0],.025);slab.material=mat(pal[k],{roughness:.38,emissive:pal[k],emissiveIntensity:.2});slab.rotation.y=k*.24;}ball(root,.025,C.gold,[.03,.52,0]);
  }else if(type==='clay'){
   cyl(root,.23,.24,.045,C.cream,[0,.025,0]);archPanel(root,.24,.34,.075,pal[0],[-.1,.055,-.025]);archPanel(root,.2,.24,.09,pal[1],[.1,.055,.04]);ball(root,.075,pal[2],[.075,.38,.015]);

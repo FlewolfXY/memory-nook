@@ -7,7 +7,7 @@ export function installFurnishings(root){
   const objects=[];root.traverse(o=>{if(o.userData.layoutId)objects.push(o);});
   for(const o of objects){
     const oldIndex=Number(o.userData.layoutId.slice(5));o.userData.layoutId=legacyIds[oldIndex];
-    o.userData.furnishingKind=furnishingKind(o.userData.layoutId);
+    o.userData.furnishingKind=furnishingKind(o.userData.layoutId);o.userData.originalPosition=o.position.clone();
     if(oldIndex>=4&&oldIndex<=27){
       const i=oldIndex-4;o.userData.extraBook=!displayBooks.includes(i);o.visible=!o.userData.extraBook;
       if(o.visible){o.children[0].scale.x=1.4;for(const line of o.children.slice(1))line.scale.x=1.2;}
@@ -26,6 +26,9 @@ export function installFurnishings(root){
     if(o.userData.furnishingKind==='frame'){
       const photo=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({color:'#ffffff'}));
       photo.position.z=.091;photo.scale.set(.31,.40,1);photo.visible=false;photo.userData.traceDecoration=true;o.add(photo);o.userData.storyPhoto=photo;
+    }
+    if(o.userData.furnishingKind==='cup'){
+      const tea=new T.Mesh(new T.CylinderGeometry(.09,.09,.004,24),new T.MeshStandardMaterial({color:'#6e5943',roughness:.35}));tea.position.set(0,.172,0);tea.userData.traceDecoration=true;o.add(tea);
     }
     const own=[];function collect(n){if(n!==o&&n.userData.layoutId)return;if(n.userData.traceDecoration)return;if(n.isMesh){n.material=n.material.clone();n.userData.originalColor=n.material.color.clone();own.push(n);}for(const c of n.children)collect(c);}collect(o);o.userData.tintMeshes=own;
   }
@@ -56,7 +59,8 @@ export class FurnishingStories{
     cached={listeners:[apply]};this.photos.set(url,cached);const texture=new T.TextureLoader().load(assetURL(url),tex=>{tex.colorSpace=T.SRGBColorSpace;cached.image=tex.image;cached.listeners.forEach(fn=>fn(tex));cached.listeners=[];},undefined,()=>{this.photos.delete(url);if(mesh.userData.photoUrl===url)mesh.visible=false;});cached.texture=texture;
   }
   apply(records,bindings){
-    const sources=new Map(records.map(r=>[r.id,r]));
+    const sources=new Map(records.map(r=>[r.id,r]));const personal=records.some(r=>r.personalEdition);
+    for(const id of ['book-01','book-08','book-15','book-17']){const o=this.objects.get('living-room/'+id);if(o&&personal&&!o.userData.extraBook)o.visible=!!bindings['living-room/'+id]||o.position.distanceTo(o.userData.originalPosition)>.001;}
     for(const [id,o]of this.objects){
       const r=sources.get(bindings[id]),kind=o.userData.furnishingKind;
       o.userData.traceId=r?.id||null;o.userData.traceTitle=r?.title||null;

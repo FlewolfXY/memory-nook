@@ -18,13 +18,13 @@ export function gardenSign(){
  ball(root,.38,'#8bcac3',[1.61,.135,.06],[1.02,.13,.92]);
  ball(root,.27,'#b6e0d4',[1.59,.16,.01],[1,.10,.90]);
  for(let i=0;i<5;i++){
-  const x=.09+i*.32,z=Math.sin(i*.9)*.065;
-  const stone=ball(root,.235,i%2?'#f4dfb3':'#fff0cd',[x,.19-i*.012,z],[1,.28,.79]);stone.rotation.y=-.12+i*.13;
+  const x=.10+i*.30,z=.91+Math.sin(i*.9)*.065;
+  const stone=ball(root,.235,i%2?'#f4dfb3':'#fff0cd',[x,-.035,z],[1,.28,.79]);stone.rotation.y=-.12+i*.13;
  }
  // A flattened arrow-tip stone keeps the direction readable without a signboard.
  const tip=new T.Shape();tip.moveTo(-.21,-.24);tip.quadraticCurveTo(-.28,0,-.21,.24);tip.lineTo(.21,.035);tip.quadraticCurveTo(.26,0,.21,-.035);tip.closePath();
  const tg=new T.ExtrudeGeometry(tip,{depth:.025,bevelEnabled:true,bevelSize:.035,bevelThickness:.025,bevelSegments:4});tg.rotateX(-Math.PI/2);
- const tipStone=new T.Mesh(tg,new T.MeshStandardMaterial({color:'#ffe7b5',roughness:.83}));tipStone.position.set(1.73,.19,0);tipStone.castShadow=true;root.add(tipStone);
+ const tipStone=new T.Mesh(tg,new T.MeshStandardMaterial({color:'#ffe7b5',roughness:.83}));tipStone.position.set(1.70,-.015,.91);tipStone.castShadow=true;root.add(tipStone);
  const beds=[[.27,-.36],[.73,.35],[1.16,-.52],[1.38,.47]];
  for(let j=0;j<beds.length;j++){
   const [x,z]=beds[j];ball(root,.18,j%2?'#c2d99a':'#9fbc79',[x,.13,z],[1.15,.35,.85]);
