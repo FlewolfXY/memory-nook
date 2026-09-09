@@ -1,5 +1,5 @@
 import {storyExamples} from './demo-memories.mjs';
-import {defaultBindings,legacyIds,stableId,migrateLayout,migrateAttachments,validBindings} from './furnishing-data.mjs';
+import {defaultBindings,allLayoutIds,stableId,migrateLayout,migrateAttachments,validBindings} from './furnishing-data.mjs';
 import {validTransform} from './editor.mjs';
 const photoPaths=new Set(storyExamples.map(r=>r.image));
 export const safePhoto=image=>!image||typeof image==='string'&&(photoPaths.has(image)||/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image));
@@ -49,18 +49,19 @@ export function upgradeStories(home,edition){
 }
 export function validBackup(data){
   if(![1,2].includes(data?.version)||!Array.isArray(data.records)||data.records.length>1000)return false;
-  const ids=new Set(),forms=['card','frame','lamp','clay'],spots=['table','window','shelf','cabinet','bookshelf','side'];
+  const ids=new Set(),forms=['card','frame','lamp','clay','fish'],spots=['table','window','shelf','cabinet','bookshelf','side','garden-table','garden-bench','pond'];
   for(const r of data.records){
     if(!r||typeof r.id!=='string'||!/^[-a-zA-Z0-9]{1,80}$/.test(r.id)||ids.has(r.id)||typeof r.title!=='string'||r.title.length>80||typeof r.note!=='string'||r.note.length>1000||typeof r.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.date)||!forms.includes(r.form)||(r.spot&&!spots.includes(r.spot))||!Array.isArray(r.palette)||r.palette.length!==3||!r.palette.every(c=>/^#[a-f0-9]{6}$/i.test(c))||!Number.isFinite(r.rotation)||!Number.isFinite(r.scale)||r.scale<.1||r.scale>2||!Array.isArray(r.parents)||!safePhoto(r.image))return false;
+    if(r.spot&&(r.form==='fish')!==(r.spot==='pond'))return false;
     for(const key of ['position','localPosition'])if(r[key]&&(!Array.isArray(r[key])||r[key].length!==3||!r[key].every(n=>Number.isFinite(n)&&Math.abs(n)<30)))return false;
-    if(r.parentId&&!legacyIds.includes(stableId(r.parentId)))return false;
+    if(r.parentId&&!allLayoutIds.includes(stableId(r.parentId)))return false;
     if(r.photoCredit&&(!(typeof r.photoCredit.creator==='string'&&r.photoCredit.creator.length<160)||typeof r.photoCredit.url!=='string'||!/^https:\/\//.test(r.photoCredit.url)||r.photoCredit.url.length>1000))return false;
     ids.add(r.id);
   }
   const records=new Map(data.records.map(r=>[r.id,r])),active=new Set(),done=new Set();
   const visit=id=>{if(done.has(id))return true;if(active.has(id)||!records.has(id))return false;active.add(id);for(const p of records.get(id).parents)if(!visit(p))return false;active.delete(id);done.add(id);return true;};
   if(!data.records.every(r=>visit(r.id)))return false;
-  if(data.layout){if(typeof data.layout!=='object'||Array.isArray(data.layout))return false;const layout=migrateLayout(data.layout);for(const [id,t]of Object.entries(layout)){if(!legacyIds.includes(id)||!validTransform(t)||(t.parent&&!legacyIds.includes(t.parent)))return false;const chain=new Set([id]);for(let p=t.parent;p;p=layout[p]?.parent){if(chain.has(p))return false;chain.add(p);}}}
+  if(data.layout){if(typeof data.layout!=='object'||Array.isArray(data.layout))return false;const layout=migrateLayout(data.layout);for(const [id,t]of Object.entries(layout)){if(!allLayoutIds.includes(id)||!validTransform(t)||(t.parent&&!allLayoutIds.includes(t.parent)))return false;const chain=new Set([id]);for(let p=t.parent;p;p=layout[p]?.parent){if(chain.has(p))return false;chain.add(p);}}}
   return data.bindings===undefined||validBindings(data.bindings,data.records);
 }
 export async function portableBackup(home,readPhoto){

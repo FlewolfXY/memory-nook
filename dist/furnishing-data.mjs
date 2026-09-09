@@ -1,3 +1,4 @@
+import {courtyardIds} from './spaces.mjs';
 // Explicit v1 identities. Keep this mapping when the geometry tree changes.
 export const legacyIds=[
  'window-bench','window-cushion-left','window-cushion-right','bookcase',
@@ -14,5 +15,6 @@ Object.assign(defaults,{'window-cushion-left':'picnic','window-cushion-right':'l
 export const defaultBindings=Object.fromEntries(Object.entries(defaults).map(([id,theme])=>['living-room/'+id,'story-'+theme]));
 export function migrateLayout(layout={}){return Object.fromEntries(Object.entries(layout).map(([id,t])=>[stableId(id),{...t,parent:t.parent?stableId(t.parent):null}]));}
 export function migrateAttachments(records){return records.map(r=>({...r,...(r.parentId?{parentId:stableId(r.parentId)}:{})}));}
-export function validBindings(bindings,records){if(!bindings||Array.isArray(bindings)||typeof bindings!=='object')return false;const ids=new Set(records.map(r=>r.id));return Object.entries(bindings).every(([p,id])=>legacyIds.includes(stableId(p))&&ids.has(id));}
+export const allLayoutIds=[...legacyIds,...courtyardIds];
+export function validBindings(bindings,records){if(!bindings||Array.isArray(bindings)||typeof bindings!=='object')return false;const ids=new Set(records.map(r=>r.id));return Object.entries(bindings).every(([p,id])=>allLayoutIds.includes(stableId(p))&&ids.has(id));}
 export function visibleObject(o){for(let p=o;p;p=p.parent)if(!p.visible)return false;return true;}
