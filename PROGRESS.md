@@ -1,6 +1,6 @@
 # Memory Nook · 总进度
 
-更新：2026-09-09 UTC / LOG-013。当前产品基准为 [PROJECT_BRIEF](PROJECT_BRIEF.md)，历史改动见 [CHANGELOG](CHANGELOG.md)，后续顺序见 [ROADMAP](ROADMAP.md)。本文件只写当前状态，不堆叠旧“当前版本”。
+产品基准：2026-09-09 UTC / LOG-013；最近仓库维护：2026-10-22 Asia/Taipei / LOG-015。当前产品基准为 [PROJECT_BRIEF](PROJECT_BRIEF.md)，历史改动见 [CHANGELOG](CHANGELOG.md)，后续顺序见 [ROADMAP](ROADMAP.md)。本文件只写当前状态，不堆叠旧“当前版本”。
 
 ## 当前判断
 
@@ -61,6 +61,6 @@
 
 原型阶段出口：3 条自己的真实记忆能先保存、选定形态、亲手安放；延迟回访能认出并打开来源；至少一次完整备份恢复成功；没有开放的已确认内容覆盖缺陷。之后才把 Cross 或新生物作为作品集主展示扩展。
 
-## 独立备用目录 · LOG-014（2026-10-22 Asia/Taipei）
+## 最近仓库维护 · LOG-015（2026-10-22 Asia/Taipei）
 
-`dist/goodnight-nook/` 承载用户另一个项目「晚安小窝」的静态备用页；包含 23 个场景与浏览器本地保存，不改变上文 Memory Nook 产品基准、开放问题或 R1 顺序。来源与验证见 CHANGELOG 的 LOG-014。该目录随现有 Pages workflow 发布，发布结果以本次提交对应的 Actions 回执为准。完整源码另存私有分支，原 Sites 的账户数据没有发布或迁移。
+LOG-014 的跨项目托管已按用户要求撤回。当前应用文件恢复为 LOG-013 基准，本仓库继续只服务 Memory Nook；产品开放问题与下一片段 R1 保持不变。撤回原因、范围和验证见 CHANGELOG 的 LOG-015。
